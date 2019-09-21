@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'MenuItem.dart';
+
+import 'movie/movieList.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,35 +9,58 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+        home: DefaultTabController(
+      length: 3,
+      child: Scaffold(
         appBar: AppBar(
           title: Text("Apollo"),
+          centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {},
+            )
+          ],
         ),
-        body: HomePage(),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.all(0),
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568959667488&di=9a2ed3e07cb5333385757f8dcf72f70a&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F947e85a92e41bba79efe71cbbc293a5cb1b8c245c9bf-CDlkKO_fw658"),
+                ),
+                accountName: Text("Light"),
+                accountEmail: Text("ZhangMingming@qq.com"),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568959667488&di=9a2ed3e07cb5333385757f8dcf72f70a&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F947e85a92e41bba79efe71cbbc293a5cb1b8c245c9bf-CDlkKO_fw658"))),
+              ),
+              ListTile(
+                title: Text("豆瓣电影"),
+                leading: Icon(Icons.movie_filter),
+              ),
+              ListTile(
+                title: Text("开眼视频"),
+                leading: Icon(Icons.remove_red_eye),
+              )
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+            height: 40,
+            decoration: BoxDecoration(color: Colors.blueAccent),
+            child: TabBar(
+              indicator: null,
+              tabs: <Widget>[Tab(text: "正在热映"), Tab(text: "即将上映"), Tab(text: "TOP250")],
+            )),
+        body: TabBarView(
+          children: <Widget>[MovieList(type: "in_theaters"), MovieList(type: "coming_soon"), MovieList(type: "top250")],
+        ),
       ),
-    );
+    ));
   }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => GridViewState();
-}
-
-class GridViewState extends State {
-  @override
-  Widget build(BuildContext context) {
-    var menuList = new List<MenuItem>();
-   // menuList..add(new MenuItem("",""))..add("");
-    return new GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, childAspectRatio: 4 / 5),
-        itemBuilder: (BuildContext context, int index) {
-          return item(
-            context,
-          );
-        });
-  }
-
-  Widget item(BuildContext context) {}
 }

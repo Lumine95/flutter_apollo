@@ -16,7 +16,7 @@ class MovieList extends StatefulWidget {
 }
 
 // StatefulWidget必须有状态管理类，用于渲染MovieList控件UI结构
-class _MovieListState extends State<MovieList> {
+class _MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixin {
   int page = 1;
   int size = 10;
   var movieList = [];
@@ -43,9 +43,11 @@ class _MovieListState extends State<MovieList> {
 
         return GestureDetector(
             onTap: () {
-//              Navigator.push(context, (BuildContext ctx) {
-//return new MovieDetail()
-//              });
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                return new MovieDetail(
+                  title: item["title"],
+                );
+              }));
             },
             child: Row(
               children: <Widget>[
@@ -77,11 +79,14 @@ class _MovieListState extends State<MovieList> {
 
   getMovieList() async {
     var response =
-    await dio.get("http://api.douban.com/v2/movie/${widget.type}?apikey=0b2bdeda43b5688921839c8ecb20399b&start=0&count=10");
+        await dio.get("http://api.douban.com/v2/movie/${widget.type}?apikey=0b2bdeda43b5688921839c8ecb20399b&start=0&count=10");
     // 为私有数据赋值，需要把赋值的操作放到setState函数中，否则页面不会刷新
     print(response);
     setState(() {
       movieList = response.data["subjects"];
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

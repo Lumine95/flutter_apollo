@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'movie/movideDetail.dart';
 import 'movie/movieList.dart';
 
 void main() => runApp(MyApp());
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: DefaultTabController(
-      length: 3,
+          length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Apollo"),
@@ -44,8 +45,16 @@ class MyApp extends StatelessWidget {
                 leading: Icon(Icons.movie_filter),
               ),
               ListTile(
-                title: Text("开眼视频"),
-                leading: Icon(Icons.remove_red_eye),
+                title: Text("携程旅行"),
+                leading: Icon(Icons.airplanemode_active),
+                onTap: () {
+                  print(context.toString());
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                    return MovieDetail(
+                      title: "title",
+                    );
+                  }));
+                },
               )
             ],
           ),

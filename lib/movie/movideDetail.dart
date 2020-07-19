@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MovieDetail extends StatefulWidget {
-  String title;
+  var item;
 
   @override
   State<StatefulWidget> createState() {
     return _MovieDetailState();
   }
 
-  MovieDetail({Key, key, @required this.title}) : super(key: key);
+  MovieDetail({Key, key, @required this.item}) : super(key: key);
 }
 
 class _MovieDetailState extends State<MovieDetail> {
@@ -17,9 +17,10 @@ class _MovieDetailState extends State<MovieDetail> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.item["title"]),
         centerTitle: true,
       ),
+      body: Text(widget.item.toString()),
     );
   }
 }

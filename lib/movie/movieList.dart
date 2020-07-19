@@ -26,7 +26,6 @@ class _MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixi
     super.initState();
     getMovieList();
   }
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -44,9 +43,7 @@ class _MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixi
         return GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                return new MovieDetail(
-                  title: item["title"],
-                );
+                return new MovieDetail(item: item);
               }));
             },
             child: Row(
@@ -57,20 +54,30 @@ class _MovieListState extends State<MovieList> with AutomaticKeepAliveClientMixi
                   height: 180,
                   fit: BoxFit.cover,
                 ),
-                Container(
-                    height: 200,
-                    padding: EdgeInsets.only(left: 15, top: 20, bottom: 20, right: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Text(item["title"]),
-                        Text("导演：${directorName.join('/')}"),
-                        Text("主演：${castName.join('/')}"),
-                        Text("类型：${item["genres"].join('/')}"),
-                        Text("评分：${item["rating"]["average"]}")
-                      ],
-                    ))
+                Expanded(
+                    child: Container(
+                        height: 200,
+                        padding: EdgeInsets.only(left: 15, top: 20, bottom: 20, right: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Text(
+                              item["title"],
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            Text("导演：${directorName.join('/')}"),
+                            Text("主演：${castName.join('/')}"),
+                            Text("类型：${item["genres"].join('/')}"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("评分："),
+                                Text("${item["rating"]["average"]}", style: TextStyle(color: Colors.red)),
+                              ],
+                            )
+                          ],
+                        ))),
               ],
             ));
       },

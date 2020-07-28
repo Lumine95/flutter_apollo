@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,43 +13,89 @@ void main() {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var newsList = [];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primaryColor: Color(0xFF1177B0)),
         home: Scaffold(
-          appBar: AppBar(
-            title: Text("知乎日报"),
-            centerTitle: true,
+          appBar: AppBar(title: Text("知乎日报"), centerTitle: true),
+          body: ListView.builder(
+              itemCount: newsList.length,
+              itemBuilder: (BuildContext context, int index) {
+                var item = newsList[index];
+                return buildItem(item);
+              }),
+          floatingActionButton: FloatingActionButton(
+            foregroundColor: Colors.white,
+            onPressed: () => {getMovieList()},
+            child: Icon(Icons.get_app),
           ),
-          body: Container(
-            height: 100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ));
+  }
+
+  Widget buildItem(item) {
+    return Container(
+      height: 105,
+//      foregroundDecoration: BoxDecoration(color: Color.fromARGB(55, 5, 2, 0)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Text(
-                      "测试知乎日报啦啦啦啦啦啦",
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
-                    )
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 15),
+                  child: Text(item["title"], style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17)),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.network(
-                    "https://wx4.sinaimg.cn/mw690/8725b930gy1ggwc946obgj20dw0fs412.jpg",
-                    width: 88,
-                    height: 88,
-                    fit: BoxFit.cover,
+                SizedBox(height: 2),
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Text(item["hint"], style: TextStyle(fontSize: 14, color: Colors.grey)),
+                    ],
                   ),
-                ),
+                )
               ],
             ),
           ),
-        ));
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                item["images"][0],
+                width: 88,
+                height: 88,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  getMovieList() async {
+    Dio dio = new Dio();
+    var response = await dio.get("https://news-at.zhihu.com/api/4/news/latest");
+//  print(response);
+    setState(() {
+      newsList.addAll(response.data["stories"]);
+      newsList.addAll(response.data["stories"]);
+//      newsList = response.data["stories"];
+    });
   }
 }
 

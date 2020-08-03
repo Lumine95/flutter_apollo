@@ -1,8 +1,13 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_apollo/zhihu/daily_news.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'menu_item.dart';
+import 'value/color.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,159 +23,97 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+var itemList = [];
+
 class _MyAppState extends State<MyApp> {
-  var newsList = [];
+  @override
+  void initState() {
+    super.initState();
+    itemList.add(
+        MenuItem("知乎日报", "https://img2.woyaogexing.com/2020/06/02/e70e13227ed445fbb7f9b636503f864e!400x400.jpeg", DailyNews()));
+    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/08/03/5498611e26dd417c807f35ed8018312d!400x400.jpeg", null));
+    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/06/10/00e0034144fe4f9ea540e12e27ed9074!400x400.jpeg", null));
+    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/05/11/7a58302576dd4c9bb1dd6f75aa086315!400x400.jpeg", null));
+    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/02/24/755a1b44698849d188413768fc3ff663!400x400.jpeg", null));
+    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/07/13/71c25250da8540839fadbb003ce8863f!400x400.jpeg", null));
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primaryColor: Color(0xFF1177B0)),
-        home: Scaffold(
-          appBar: AppBar(title: Text("知乎日报"), centerTitle: true),
-          body: ListView.builder(
-              itemCount: newsList.length,
-              itemBuilder: (BuildContext context, int index) {
-                var item = newsList[index];
-                return buildItem(item);
-              }),
-          floatingActionButton: FloatingActionButton(
-            foregroundColor: Colors.white,
-            onPressed: () => {getMovieList()},
-            child: Icon(Icons.get_app),
-          ),
-        ));
+        theme: ThemeData(
+          primaryColor: ColorUtil.themeColor,
+        ),
+        home: HomePage());
   }
+}
 
-  Widget buildItem(item) {
-    return Container(
-      height: 105,
-//      foregroundDecoration: BoxDecoration(color: Color.fromARGB(55, 5, 2, 0)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Text(item["title"], style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17)),
-                ),
-                SizedBox(height: 2),
-                Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Row(
-                    children: <Widget>[
-                      Text(item["hint"], style: TextStyle(fontSize: 14, color: Colors.grey)),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                item["images"][0],
-                width: 88,
-                height: 88,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ],
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: ColorUtil.f6f6f6,
+      appBar: AppBar(
+        title: Text("首页"),
+        centerTitle: true,
+      ),
+      body: buildGridView(),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
+        backgroundColor: ColorUtil.themeColor,
+        onPressed: () => {
+          Fluttertoast.showToast(msg: "test"),
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
 
-  getMovieList() async {
-    Dio dio = new Dio();
-    var response = await dio.get("https://news-at.zhihu.com/api/4/news/latest");
-//  print(response);
-    setState(() {
-      newsList.addAll(response.data["stories"]);
-      newsList.addAll(response.data["stories"]);
-//      newsList = response.data["stories"];
-    });
+  Widget buildGridView() {
+    return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: itemList.length,
+        itemBuilder: (BuildContext context, int index) {
+          MenuItem item = itemList[index];
+          return GestureDetector(
+            onTap: () {
+              if (item.widget != null) {
+                Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
+                  return item.widget;
+                }));
+              }
+            },
+            child: Card(
+              elevation: 4,
+              margin: EdgeInsets.all(5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+//                  side: BorderSide(color: Colors.green, width: 25),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClipOval(
+                      child: Container(
+                        child: Image.network(item.menuImg, width: 60, height: 60, fit: BoxFit.cover),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      item.menuText,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: ColorUtil.color3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
-
-class DoubanHomePage extends StatefulWidget {
-  @override
-  _DoubanHomePageState createState() => _DoubanHomePageState();
-}
-
-class _DoubanHomePageState extends State<DoubanHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-//Widget buildDefaultTabController(BuildContext context) {
-//  return DefaultTabController(
-//    length: 3,
-//    child: Scaffold(
-//      appBar: AppBar(
-//        title: Text("Apollo"),
-//        centerTitle: true,
-//        actions: <Widget>[
-//          IconButton(
-//            icon: Icon(Icons.search),
-//            onPressed: () {},
-//          )
-//        ],
-//      ),
-//      drawer: Drawer(
-//        child: ListView(
-//          padding: EdgeInsets.all(0),
-//          children: <Widget>[
-//            UserAccountsDrawerHeader(
-//              currentAccountPicture: CircleAvatar(
-//                backgroundImage: NetworkImage(
-//                    "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568959667488&di=9a2ed3e07cb5333385757f8dcf72f70a&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F947e85a92e41bba79efe71cbbc293a5cb1b8c245c9bf-CDlkKO_fw658"),
-//              ),
-//              accountName: Text("Light"),
-//              accountEmail: Text("ZhangMingming@qq.com"),
-//              decoration: BoxDecoration(
-//                  image: DecorationImage(
-//                      fit: BoxFit.cover,
-//                      image: NetworkImage(
-//                          "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568959667488&di=9a2ed3e07cb5333385757f8dcf72f70a&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F947e85a92e41bba79efe71cbbc293a5cb1b8c245c9bf-CDlkKO_fw658"))),
-//            ),
-//            ListTile(
-//              title: Text("豆瓣电影"),
-//              leading: Icon(Icons.movie_filter),
-//            ),
-//            ListTile(
-//              title: Text("携程旅行"),
-//              leading: Icon(Icons.airplanemode_active),
-//              onTap: () {
-//                print(context.toString());
-////                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-////                    return MovieDetail(
-////                      title: "title",
-////                    );
-////                  }));
-//              },
-//            )
-//          ],
-//        ),
-//      ),
-//      bottomNavigationBar: Container(
-//          height: 40,
-//          decoration: BoxDecoration(color: Colors.blueAccent),
-//          child: TabBar(
-//            indicator: null,
-//            tabs: <Widget>[Tab(text: "正在热映"), Tab(text: "即将上映"), Tab(text: "TOP250")],
-//          )),
-//      body: TabBarView(
-//        children: <Widget>[MovieList(type: "in_theaters"), MovieList(type: "coming_soon"), MovieList(type: "top250")],
-//      ),
-//    ),
-//  );
-//}

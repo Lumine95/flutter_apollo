@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_apollo/zhihu/daily_news.dart';
+import 'package:flutter_apollo/ui/zhihu/daily_news.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'menu_item.dart';
+import 'ui/navigationBar/bottom_navigation_bar.dart';
 import 'value/color.dart';
 
 void main() {
@@ -31,7 +32,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     itemList.add(
         MenuItem("知乎日报", "https://img2.woyaogexing.com/2020/06/02/e70e13227ed445fbb7f9b636503f864e!400x400.jpeg", DailyNews()));
-    itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/08/03/5498611e26dd417c807f35ed8018312d!400x400.jpeg", null));
+    itemList.add(MenuItem("NavigationBar",
+        "https://img2.woyaogexing.com/2020/07/24/e27c9910210343f681165c139fb58e5b!400x400.jpeg", BottomNavigationBarHome()));
     itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/06/10/00e0034144fe4f9ea540e12e27ed9074!400x400.jpeg", null));
     itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/05/11/7a58302576dd4c9bb1dd6f75aa086315!400x400.jpeg", null));
     itemList.add(MenuItem("测试", "https://img2.woyaogexing.com/2020/02/24/755a1b44698849d188413768fc3ff663!400x400.jpeg", null));
@@ -101,10 +103,10 @@ class HomePage extends StatelessWidget {
                   children: [
                     ClipOval(
                       child: Container(
-                        child: Image.network(item.menuImg, width: 60, height: 60, fit: BoxFit.cover),
+                        child: Image.network(item.menuImg, width: 66, height: 66, fit: BoxFit.cover),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
                     Text(
                       item.menuText,
                       style: TextStyle(fontWeight: FontWeight.bold, color: ColorUtil.color3),
